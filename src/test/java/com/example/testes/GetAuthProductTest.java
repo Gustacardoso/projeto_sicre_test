@@ -30,7 +30,7 @@ public class GetAuthProductTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Token Invalido")
+    @DisplayName("Token Invalido ")
     public void naoDeveAcessarProdutosProtegidosSemToken() {
         given()
                 .contentType(ContentType.JSON)
