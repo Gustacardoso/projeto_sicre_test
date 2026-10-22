@@ -45,13 +45,13 @@ mvn clean test
 Executar uma classe de teste específica:
 
 ```bash
-mvn test -Dtest=GetAuthTest
+mvn test -Dtest=LoginTest
 ```
 
 Executar um único método:
 
 ```bash
-mvn test -Dtest=GetProductTest#deveBuscarProdutoPorId
+mvn test -Dtest=ProductsTest#deveBuscarProdutoPorId
 ```
 
 Gerar o relatório HTML do Surefire, depois de rodar os testes:
@@ -68,38 +68,42 @@ Também é possível rodar pela IDE (IntelliJ IDEA): abra o projeto como Maven e
 
 | Classe | Teste | O que valida |
 |---|---|---|
-| `GetHealthTest` | `deveRetornarStatusOkEDizerQueEMetodoGet` | `GET /test` retorna 200, `status = ok` e `method = GET` |
-| `GetAuthTest` | `loginComSucesso` | `POST /auth/login` com `emilys` / `emilyspass` retorna 200 e o `accessToken` |
-| `GetUsersTest` | `deveListarUsuariosComCamposParaLogin` | `GET /users` retorna 200 e a lista de usuários, com `username` e `password` no primeiro item |
-| `GetProductTest` | `deveListarProdutos` | `GET /products` retorna 200 e ao menos 1 produto |
-| `GetProductTest` | `deveBuscarProdutoPorId` | `GET /products/1` retorna 200, `id = 1` e `title` preenchido |
-| `GetProductTest` | `naoDeveEncontrarProdutoInexistente` | `GET /products/999999` retorna 404 ou 400 |
-| `GetAuthProductTest` | `deveAutenticarEListarProdutosProtegidos` | Com token válido, `GET /auth/products` retorna 200 e a lista de produtos com `title` e `price` |
-| `GetAuthProductTest` | `naoDeveAcessarProdutosProtegidosSemToken` | Com token inválido, `GET /auth/products` retorna 401 e `Invalid/Expired Token!` |
-| `PostProductTest` | `deveCriarProduto` | `POST /products/add` retorna 201, com `id` gerado e `title` igual ao enviado |
+| `HealthTest` | `deveRetornarStatusOk` | `GET /test` retorna 200, `status = ok` e `method = GET` |
+| `LoginTest` | `deveAutenticarComCredenciaisValidas` | `POST /auth/login` com `emilys` / `emilyspass` retorna 200, `accessToken` preenchido e o `username` |
+| `LoginTest` | `naoDeveAutenticarComCredenciaisInvalidas` | Senha incorreta retorna 400 e `Invalid credentials` |
+| `UsersTest` | `deveListarUsuariosComCamposParaLogin` | `GET /users` retorna 200 e a lista de usuários, com `username` e `password` no primeiro item |
+| `ProductsTest` | `deveListarProdutos` | `GET /products` retorna 200 e ao menos 1 produto |
+| `ProductsTest` | `deveBuscarProdutoPorId` | `GET /products/1` retorna 200, `id = 1` e `title` preenchido |
+| `ProductsTest` | `naoDeveEncontrarProdutoInexistente` | `GET /products/999999` retorna 404 |
+| `ProductsTest` | `deveCriarProduto` | `POST /products/add` retorna 201, com `id` gerado, `title` e `price` iguais aos enviados |
+| `ProtectedProductsTest` | `deveListarProdutosProtegidosComTokenValido` | Com token válido, `GET /auth/products` retorna 200 e a lista de produtos com `title` e `price` |
+| `ProtectedProductsTest` | `naoDeveAcessarProdutosProtegidosComTokenInvalido` | Com token inválido, `GET /auth/products` retorna 401 e `Invalid/Expired Token!` |
 
 > O DummyJSON não persiste os dados criados. Por isso o teste de criação valida apenas a resposta e não precisa apagar o produto depois.
-> O cenário de produto inexistente aceita 404 ou 400 porque o comportamento depende da API de terceiros.
 
 ## Estrutura do projeto
 
 ```
 src/test/java/com/example/
 ├── config/
-│   ├── BaseTest.java              # Configura a baseURI e fornece obterToken() (login)
-│   └── GlobalVariavelToken.java   # Guarda o token de autenticação
+│   └── BaseTest.java              # baseURI, endpoints, credenciais de teste e obterToken() (login)
 ├── testes/                        # Classes de teste (*Test.java)
 └── utils/
     ├── RequestAuth.java           # Corpo da requisição de login
-    ├── RequestProducts.java       # Corpo da requisição de criação de produto
-    └── StartValues.java           # Paths base (/products, /auth)
+    └── RequestProducts.java       # Corpo da requisição de criação de produto
 ```
 
-Todas as classes de teste estendem `BaseTest`. Ela define a URL base (`https://dummyjson.com`) e ativa o log da requisição e da resposta quando uma validação falha. Para apontar para outro ambiente, altere `BASE_URI` em `BaseTest.java`.
+Todas as classes de teste estendem `BaseTest`. Ela define a URL base (`https://dummyjson.com`) e os endpoints, e ativa o log da requisição e da resposta quando uma validação falha.
+
+Para apontar para outro ambiente, passe a URL na execução, sem alterar o código:
+
+```bash
+mvn clean test -Dbase.uri=https://outro-ambiente.exemplo.com
+```
 
 ## Integração contínua
 
-O workflow do GitHub Actions em `.github/workflows/tests.yml` roda os testes a cada push na `main` e em pull requests. Ele publica os relatórios do Surefire como artefato por 7 dias. Há também um `.gitlab-ci.yml` equivalente para o GitLab.
+O workflow do GitHub Actions em `.github/workflows/tests.yml` roda os testes a cada push na `main` e em pull requests. Ele publica os relatórios do Surefire como artefato por 7 dias.
 
 ## Tecnologias
 

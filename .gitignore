@@ -41,3 +41,6 @@ build/
 ### Allure ###
 allure-results/
 allure-report/
+
+### IntelliJ IDEA ###
+.idea/

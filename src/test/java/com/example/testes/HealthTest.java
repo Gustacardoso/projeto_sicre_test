@@ -1,19 +1,20 @@
 package com.example.testes;
 
 import com.example.config.BaseTest;
-import io.restassured.http.ContentType;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-public class GetHealthTest extends BaseTest {
+public class HealthTest extends BaseTest {
+
     @Test
-    public void deveRetornarStatusOkEDizerQueEMetodoGet() {
+    @DisplayName("API responde status ok no endpoint de saúde")
+    public void deveRetornarStatusOk() {
         given()
-                .contentType(ContentType.JSON)
                 .when()
-                .get("/test")
+                .get(HEALTH)
                 .then()
                 .statusCode(200)
                 .body("status", equalTo("ok"))
