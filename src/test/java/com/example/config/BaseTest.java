@@ -6,7 +6,7 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
 
 import static io.restassured.RestAssured.given;
-
+//test
 public class BaseTest {
     protected static String BASE_URI = "https://dummyjson.com";        // exemplo
     protected static String pathAuth = "/auth";                         // teu path

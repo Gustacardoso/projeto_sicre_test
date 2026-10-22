@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>br.com.sicredi</groupId>
-    <artifactId>gustavo_projeto_sicredi</artifactId>
+    <artifactId>testsicrediapi</artifactId>
     <version>1.0.0</version>
-    <name>gustavo_projeto_sicredi</name>
+    <name>testsicrediapi</name>
     <packaging>jar</packaging>
 
     <properties>

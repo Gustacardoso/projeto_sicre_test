@@ -1,0 +1,23 @@
+image: maven:3.9.6-eclipse-temurin-17
+
+stages:
+  - test
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository
+
+run-tests:
+  stage: test
+  script:
+    - mvn -B clean test
+    - mvn -B surefire-report:report
+  artifacts:
+    when: always
+    paths:
+      - target/surefire-reports/*
+      - target/site/*
+    expire_in: 1 week
